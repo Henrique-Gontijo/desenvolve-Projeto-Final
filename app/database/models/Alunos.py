@@ -7,6 +7,10 @@ class Alunos(Base):
     __tablename__ = "alunos"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    nome: Mapped[str] = mapped_column(String(200), nullable=False)
+    nome: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(150), nullable=False)
     deleted: Mapped[bool] = mapped_column(default=False)
+
+    def __init__(self, nome, email):
+        self.nome = nome
+        self.email = email

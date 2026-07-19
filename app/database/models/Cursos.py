@@ -8,6 +8,10 @@ class Cursos(Base):
     __tablename__ = "cursos"
 
     id: Mapped[int] = mapped_column(autoincrement=True)
-    titulo: Mapped[str] = mapped_column(String(180), nullable=False)
+    titulo: Mapped[str] = mapped_column(String(180), nullable=False, unique=True)
     descricao: Mapped[Optional[str]]
     deleted: Mapped[bool] = mapped_column(default=False)
+
+    def __init__(self, titulo, descricao):
+        self.titulo = titulo
+        self.descricao = descricao
