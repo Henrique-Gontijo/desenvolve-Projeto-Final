@@ -6,7 +6,7 @@ from app.controllers.CursosHandler import CursosHandler
 from app.controllers.MatriculasHandler import MatriculasHandler
 
 
-cursos_router = APIRouter(prefix="cursos", tags=["cursos"])
+cursos_router = APIRouter(prefix="/cursos", tags=["cursos"])
 
 @cursos_router.get("/")
 async def listar_cursos(status_code=200):
@@ -26,11 +26,11 @@ async def listar_cursos(status_code=200):
 
 @cursos_router.post("/cadastro")
 async def cadastrar_aluno(schema: CreateCursoSchema, status_code=201):
-    CursosHandler.create(schema)
+    CursosHandler.create(titulo=schema.titulo, descricao=schema.descricao)
 
     return {"message": "Curso cadastrado com sucesso!"}
 
-@cursos_router.put("{id_curso}")
+@cursos_router.put("/{id_curso}")
 async def atualizar_dados_curso(id_curso: int, status_code=200):
     curso = CursosHandler.get_byId(id_curso)
 
@@ -49,19 +49,19 @@ async def atualizar_dados_curso(id_curso: int, status_code=200):
     #TODO colocar erro de curso não encontrado
 
 
-@cursos_router.put("{id_curso}/atualizar_dados")
+@cursos_router.put("/{id_curso}/atualizar_dados")
 async def atualizar_dados_curso(id_curso: int, schema: UpdateCursoSchema, status_code=200):
-    CursosHandler.update(id_curso, schema)
+    CursosHandler.update(id_curso, titulo=schema.titulo, descricao=schema.descricao)
 
-@cursos_router.delete("{id_curso}/deletar")
+@cursos_router.delete("/{id_curso}/deletar")
 async def deletar_curso(id_curso: int, status_code=400):
     CursosHandler.hard_delete(id_curso)
 
-@cursos_router.post("{id_curso}/deletar")
+@cursos_router.post("/{id_curso}/deletar")
 async def excluir_curso(id_curso: int, status_code=400):
     CursosHandler.soft_delete(id_curso)
 
-@cursos_router.get("{id_curso}/alunos")
+@cursos_router.get("/{id_curso}/alunos")
 async def listar_alunos_matriculados(id_curso: int, status_code=200):
     alunos = CursosHandler.get_alunos(id_curso)
 
@@ -77,6 +77,6 @@ async def listar_alunos_matriculados(id_curso: int, status_code=200):
             "alunos_matriculados": []
         }
 
-@cursos_router.get("{id_curso/matricular_aluno}")
+@cursos_router.get("/{id_curso}/matricular_aluno")
 async def matricular_aluno(id_curso: int, id_aluno: int):
     MatriculasHandler.create(id_curso, id_aluno)

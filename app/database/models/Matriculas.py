@@ -6,7 +6,7 @@ from app.database.connection import Base
 class Matriculas(Base):
     __tablename__ = "matriculas"
 
-    id: Mapped[int] = mapped_column(autoincrement=True)
+    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
     id_curso: Mapped[int] = mapped_column(ForeignKey("cursos.id"), nullable=False)
     id_aluno: Mapped[int] = mapped_column(ForeignKey("alunos.id"), nullable=False)
     deleted: Mapped[bool] = mapped_column(default=False)

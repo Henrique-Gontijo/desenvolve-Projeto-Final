@@ -46,7 +46,7 @@ class AlunosHandler():
 
         stmt = (
             update(Alunos)
-            .where(Alunos.id_aluno == id_aluno)
+            .where(Alunos.id == id_aluno)
             .values(nome=new_nome, email=new_email)
         )
 
@@ -67,7 +67,7 @@ class AlunosHandler():
 
         stmt = (
             update(Alunos)
-            .where(Alunos.id_aluno == id_aluno)
+            .where(Alunos.id == id_aluno)
             .values(deleted=True)
         )
 
@@ -78,7 +78,7 @@ class AlunosHandler():
 
     def get_cursos(id_aluno):
 
-        ids_cursos = session.query(Matriculas.id_curso).where(Matriculas.id_aluno == id_aluno)
-        cursos = session.query(Cursos).where(Cursos.id in ids_cursos)
+        ids_cursos = session.query(Matriculas.id_curso)
+        #cursos = session.query(Cursos).where(Cursos.id in ids_cursos)
 
-        return cursos
+        return ids_cursos

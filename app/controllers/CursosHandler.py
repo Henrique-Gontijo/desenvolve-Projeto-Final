@@ -48,7 +48,7 @@ class CursosHandler():
         stmt = (
             update(Cursos)
             .where(Cursos.id == id)
-            .values(nome=new_titulo, email=new_descricao)
+            .values(titulo=new_titulo, descricao=new_descricao)
         )
 
         session.execute(stmt)

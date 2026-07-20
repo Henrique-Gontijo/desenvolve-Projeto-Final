@@ -5,6 +5,6 @@ class CreateAlunoSchema(BaseModel):
     email: str
 
 
-class UpadateAlunoSchema:
+class UpadateAlunoSchema(BaseModel):
     nome: str | None
     email: str | None
