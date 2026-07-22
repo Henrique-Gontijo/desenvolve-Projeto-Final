@@ -7,40 +7,89 @@ from app.database.models.Alunos import Alunos
 from app.database.models.Matriculas import Matriculas
 
 session: Session = SessionLocal()
+session.begin()
 
 class CursosHandler():
 
-#TODO ---> O curso em questão já existe?
-
     def create( titulo: str, descricao: str = None):
-        aluno = Cursos(titulo, descricao)
-        session.begin()
-        session.add(aluno)
+        '''
+        Cria um novo curso no banco de dados.
+
+        Parâmetros:
+            - titulo (str) --> Título do curso
+            - descricao (str) --> Descrição do curso
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - message (str) --> Mensagem relacionada a operação
+        '''
+
+    
+        curso = session.query(Cursos).where(Cursos.titulo==titulo).first()
+
+        if curso and curso != {}:
+            return {
+                "status": "Error",
+                "status_code": 409,
+                "message": "Curso já existente."
+            }
+        
+        new_curso = Cursos(titulo, descricao)
+        session.add(new_curso)
 
         session.commit()
-        session.close()
 
-#TODO --> Os cursos marcados como "deleted" devem ser listados?
+        return {
+            "status": "Successful",
+            "message": "Curso criado com sucesso."
+        }
 
     def get_all():
-        session.begin()
-        response = session.query(Cursos).all()
-        session.close()
-
-        return response
     
-#TODO ---> O que acontece se nenhum curso for encontrado? (get_byId, update, hard_delete e soft_delete)
+        response = session.query(Cursos).where(Cursos.deleted == False).all()
+
+        if not response:
+            return {
+                "status": "Error",
+                "status_code": 500,
+                "message": "Erro desconhecido ao tentar listar os cursos.",
+                "data": None
+            }
+
+        return {
+            "status": "Successful",
+            "message": "Cursos listados com sucesso.",
+            "data": response
+        }
 
     def get_byId(id: int):
-        session.begin()
+    
         response = session.get(Cursos, id)
-        session.close()
 
-        return response
+        if not response or response == {} or response.deleted == True:
+            return {
+                "status": "Error",
+                "status_code": 404,
+                "message": "Aluno não encontrado.",
+                "data": None
+            }
+
+        return {
+            "status": "Successful",
+            "message": "Aluno encontrado com sucesso.",
+            "data": response
+        }
 
     def update(id: int, titulo: str = None, descricao: str = None):
-        session.begin()
+    
         curso = session.get(Cursos, id)
+
+        if not curso or curso == {} or curso.deleted == True:
+            return {
+                "status": "Error",
+                "status_code": 404,
+                "message": "Curso não encontrado.",
+            }
 
         new_titulo = titulo if titulo and titulo != "" else curso.titulo
         new_descricao = descricao if descricao and descricao != "" else curso.descricao
@@ -53,19 +102,45 @@ class CursosHandler():
 
         session.execute(stmt)
         session.commit()
-        session.close()
 
-#TODO ---> As matrículas de cursos deletados devem ser apgadas também, certo?
+        return {
+            "status": "Successful",
+            "message": "Dados atualizados com sucesso."
+        }
 
     def hard_delete(id):
-        session.begin()
-        curso = session.get(Cursos, id)
-        session.delete(curso)
+    
+        #TODO --> Hard Delete On Cascade (Será que dá para fazer com relationship?)
 
+        curso = session.get(Cursos, id)
+
+        if not curso or curso == {}:
+            return {
+                "status": "Error",
+                "status_code": 404,
+                "message": "Curso não encontrado."
+            }
+
+        session.delete(curso)
         session.commit()
-        session.close()
+
+        return {
+            "status": "Successful",
+            "message": "Curso deletado com sucesso."
+        }
 
     def soft_delete(id):
+
+        #TODO --> Soft Delete On Cascade
+
+        curso = session.get(Cursos, id)
+
+        if not curso or curso == {} or curso.deleted == True:
+            return {
+                "status": "Error",
+                "status_code": 404,
+                "message": "Curso não encontrado."
+            }
 
         stmt = (
             update(Cursos)
@@ -73,14 +148,27 @@ class CursosHandler():
             .values(deleted=True)
         )
 
-        session.begin()
         session.execute(stmt)
         session.commit()
-        session.close()
 
-    def get_alunos(id_curso):
+        return {
+            "status": "Successful",
+            "message": "Soft Delete executado com sucesso."
+        }
 
-        ids_alunos = session.query(Matriculas.id_aluno).where(Matriculas.id_curso == id_curso)
-        alunos = session.query(Alunos).where(Alunos.id in ids_alunos)
+     #TODO --> Consertar essa bagaça de get_alunos ------------------------------------------------------------
+    #TODO --> Adicionar retorno correto ----------------------------------------------------------------------
 
-        return alunos
+    def get_alunos(id):
+        
+
+        ids_alunos = (
+            session.query(Matriculas.id_aluno).where(Matriculas.deleted == False)
+            .where(Matriculas.id_curso == id).all()
+        )
+
+        #alunos = session.query(Alunos).where(Alunos.id.in_(ids_alunos)).all()
+
+        return ids_alunos
+    
+session.close()

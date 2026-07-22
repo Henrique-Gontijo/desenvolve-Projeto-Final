@@ -10,73 +10,88 @@ cursos_router = APIRouter(prefix="/cursos", tags=["cursos"])
 
 @cursos_router.get("/")
 async def listar_cursos(status_code=200):
-    cursos = CursosHandler.get_all()
+    response = CursosHandler.get_all()
 
-    if cursos and len(cursos) > 0:
-        return {
-            "message": "Cursos listados com sucesso",
-            "cursos": cursos
-        }
+    if response["status"] == "Error": 
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
     
+    if len(response["data"]) > 0:
+        return response
     else:
         return {
+            "status": "Successful",
             "message": "Nenhum curso encontrado.",
-            "cursos": []
+            "data": []
         }
+    
+@cursos_router.get("/{id_curso}")
+async def buscar_curso(id_curso: int, status_code=200):
+    response = CursosHandler.get_byId(id_curso)
+
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+
+    return response
 
 @cursos_router.post("/cadastro")
 async def cadastrar_aluno(schema: CreateCursoSchema, status_code=201):
-    CursosHandler.create(titulo=schema.titulo, descricao=schema.descricao)
+    response = CursosHandler.create(titulo=schema.titulo, descricao=schema.descricao)
 
-    return {"message": "Curso cadastrado com sucesso!"}
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+
+    return response
 
 @cursos_router.put("/{id_curso}")
 async def atualizar_dados_curso(id_curso: int, status_code=200):
-    curso = CursosHandler.get_byId(id_curso)
+    response = CursosHandler.get_byId(id_curso)
 
-    if curso and (not curso == {}):
-        return {
-            "message": "Curso encontrado com sucesso!",
-            "curso": curso
-        }
-    
-    else:
-        return {
-            "message": "Curso não encontrado ou inexistente.",
-            "curso": {}
-        }
-    
-    #TODO colocar erro de curso não encontrado
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+
+    return response
 
 
 @cursos_router.put("/{id_curso}/atualizar_dados")
-async def atualizar_dados_curso(id_curso: int, schema: UpdateCursoSchema, status_code=200):
-    CursosHandler.update(id_curso, titulo=schema.titulo, descricao=schema.descricao)
+async def atualizar_dados_curso(id_curso: int, schema: UpdateCursoSchema, status_code=204):
+    response = CursosHandler.update(id_curso, titulo=schema.titulo, descricao=schema.descricao)
+
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+
+    return response
 
 @cursos_router.delete("/{id_curso}/deletar")
-async def deletar_curso(id_curso: int, status_code=400):
-    CursosHandler.hard_delete(id_curso)
+async def deletar_curso(id_curso: int, status_code=204):
+    response = CursosHandler.hard_delete(id_curso)
 
-@cursos_router.post("/{id_curso}/deletar")
-async def excluir_curso(id_curso: int, status_code=400):
-    CursosHandler.soft_delete(id_curso)
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+
+    return response
+
+@cursos_router.delete("/{id_curso}/excluir")
+async def excluir_curso(id_curso: int, status_code=204):
+    response = CursosHandler.soft_delete(id_curso)
+
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+
+    return response
 
 @cursos_router.get("/{id_curso}/alunos")
 async def listar_alunos_matriculados(id_curso: int, status_code=200):
-    alunos = CursosHandler.get_alunos(id_curso)
+    response = CursosHandler.get_alunos(id_curso)
 
-    if alunos and len(alunos) > 0:
-        return {
-            "message": "Alunos matriculados no curso listados com sucesso",
-            "alunos_matriculados": alunos
-        }
+    if response["status"] == "Error":
+        raise HTTPException(status_code=response["status_code"], detail=response["message"])
+    
+    if len(response["data"]) > 0:
+        return response
     
     else:
-        return {
-            "message": "Nenhum aluno matriculado no curso encontrado.",
-            "alunos_matriculados": []
+        return{
+            "status": "Successful",
+            "message": "Não há nenhum aluno cadastrado neste curso.",
+            "data": []
         }
-
-@cursos_router.get("/{id_curso}/matricular_aluno")
-async def matricular_aluno(id_curso: int, id_aluno: int):
-    MatriculasHandler.create(id_curso, id_aluno)

@@ -5,6 +5,6 @@ class CreateCursoSchema(BaseModel):
     descricao: str | None
 
 
-class UpadateCursoSchema(BaseModel):
+class UpdateCursoSchema(BaseModel):
     titulo: str | None
     descricao: str | None
