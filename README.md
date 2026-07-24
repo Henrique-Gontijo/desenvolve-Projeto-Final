@@ -85,3 +85,5 @@ Ainda em processo de construção
 ### 3. Rodando o projeto localmente
 
 Após completar os passos anteriores, ainda com o ambiente .venv ativo e na pasta raiz, digite `uvicorn app.main:app`, após alguns segundos, aparecerá a seguinte linha no terminal: ***INFO**    Uvicorn running on http://127.0.0.1:8000*, clique ems sobre o link segurando o botão "Ctrl" e será aberta uma página no seu navegador com o projeto em funcionamento. Caso queira realizar requisições HTTP mais complexas (POST, PUT e DELETE), será necessário utilizar alguma outra ferramenta tal como Postman.
+
+**OBS**: Caso queira utilizar uma base de dados pré-pronta para testes, basta fazer tal e tal. Caso contrário, pode apagar o arquivo "database.db" da pasta raiz.
