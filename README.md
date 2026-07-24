@@ -44,16 +44,16 @@ Realiza do gerenciamento de três tabelas de dados:
 Para cada tabela, há uma série de endpoits disponíveis para a manipulação das tabelas:
 
 - **(GET) /tabela** --> Retorna um JSON contendo a lista de alunos existentes, contidos na chave "data".
-- **(GET) /tabela/{id}** --> Exemplo: ```/alunos/5``` retorna os dados do aluno de ID igual a 5, também contidos em um JSON na chave "data".
+- **(GET) /tabela/{id}** --> Exemplo: `/alunos/5` retorna os dados do aluno de ID igual a 5, também contidos em um JSON na chave "data".
 - **(POST) /tabela/cadastro** --> Envia uma requisição ao banco para a criação de um novo aluno.
-- **(PUT) /tabela/{id}/atualizar_dados** --> Exemplo: ```/alunos/5/atualizar_dados```, pode atualizar o nome e o email do aluno de ID 5.
-- **(DELETE) /tabela/{id}/deletar** --> Exemplo: ```/alunos/5/deletar``` deleta todos os dados do aluno de ID 5.
-- **(DELETE) /tabela/{id}/exluir** --> Exemplo: ```/alunos/5/exluir``` envia os dados do aluno de ID 5 para a lixeira.
+- **(PUT) /tabela/{id}/atualizar_dados** --> Exemplo: `/alunos/5/atualizar_dados`, pode atualizar o nome e o email do aluno de ID 5.
+- **(DELETE) /tabela/{id}/deletar** --> Exemplo: `/alunos/5/deletar` deleta todos os dados do aluno de ID 5.
+- **(DELETE) /tabela/{id}/exluir** --> Exemplo: `/alunos/5/exluir` envia os dados do aluno de ID 5 para a lixeira.
 - **(GET) /docs** ou **/redoc** --> Concede-lhe acesso à documentação detalhada dos endpoits existentes.
 
 ### Além desses, há dois endpoits específicos das tabelas ALUNOS e CURSOS:
-- **(GET) /alunos/{id}/cursos** --> Exemplo: ```àlunos/5/cursos``` retorna os cursos em que o aluno de ID 5 está matriculado.
-- **(GET) /cursos/{id}/alunos** --> Exemplo: ```cursos/3/alunos``` retorna os alunos matriculados no curso de ID 3.
+- **(GET) /alunos/{id}/cursos** --> Exemplo: `àlunos/5/cursos` retorna os cursos em que o aluno de ID 5 está matriculado.
+- **(GET) /cursos/{id}/alunos** --> Exemplo: `cursos/3/alunos` retorna os alunos matriculados no curso de ID 3.
 
 **OBS**: Para a tabela "matriculas" não há o endpoit ```PUT: /tabela/{id}/atualizar_dados```.
 
@@ -75,12 +75,18 @@ A seguir, o passo a passo de como inicializar o projeto em sua própria máquina
 - Por fim, digite `pip install -r requirements.txt` e espere o processo de instalação das bibliotecas ser completado.
 
 
-
 ### 2. Realizando conexão com o Banco de Dados
+Primeiramente, é preciso saber qual será a "URL" do seu banco de dados, em geral elas seguem o seguinte fomato:
 
-Ainda em processo de construção
+`dialect+driver://usuario:senha@host:port/banco_de_dados`
 
+Geralmente o "dialect" trata-se do seu SGBD (PostgreSQL, MySQL Oracle, etc.), já o "driver" é a ferramenta que irá interpretar o banco (psycopg2 para PostgreSQL, mysqldb para MySQL e oracledb para Oracle).
 
+Agora, o "host" é o servidor em que está o banco e "port" é a porta de entrada, a seguir, está um exemplo mais ilustrativo tirado da própria documentação do SQLAlchemy:
+
+`mysql+maysqldb://scott:tiger@127.0.0.1:8000/foo`
+
+Para mais informações sobre o assunto, acesse a página oficial do SQLAlchemy: https://docs.sqlalchemy.org/en/21/core/engines.html
 
 ### 3. Rodando o projeto localmente
 
