@@ -1,8 +1,9 @@
-from sqlalchemy import update, select
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import OperationalError
+from typing import Optional
 
-from app.database.connection import (SessionLocal)
+from sqlalchemy import update
+from sqlalchemy.orm import Session
+
+from app.database.connection import SessionLocal
 from app.database.models.Alunos import Alunos
 from app.database.models.Cursos import Cursos
 from app.database.models.Matriculas import Matriculas
@@ -26,7 +27,7 @@ class AlunosHandler():
         - hard_delete
     '''
 
-    def create( nome: str, email: str):
+    def create( nome: str, email: str) -> dict:
         '''
         Cria um novo aluno no banco de dados.
 
@@ -36,6 +37,7 @@ class AlunosHandler():
 
         Retorno (dict):
             - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
             - message (str) --> Mensagem relacionada a operação
         '''
 
@@ -57,7 +59,17 @@ class AlunosHandler():
             "message": "Aluno criado com sucesso."
         }
 
-    def get_all():
+    def get_all() -> dict:
+        '''
+        Retorna uma lista com os dados dos alunos cadastrados no curso.
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
+            - message (str) --> Mensagem relacionada a operação
+            - data (list[dict]) --> Lista de dicionários com os dados dos alunos
+        '''
+
         response = session.query(Alunos).where(Alunos.deleted == False).all()
 
         if not response:
@@ -74,7 +86,19 @@ class AlunosHandler():
             "data": response
         }
 
-    def get_byId(id: int):
+    def get_byId(id: int) -> dict:
+        '''
+        Retorna um aluno específico no banco de dados.
+
+        Parâmetros:
+            - id (int) --> ID do aluno no banco
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
+            - message (str) --> Mensagem relacionada a operação
+            - data (dict) --> Dicionário com os dados do aluno
+        '''
 
         response = session.get(Alunos, id)
 
@@ -92,7 +116,21 @@ class AlunosHandler():
             "data": response
         }
 
-    def update(id: int, nome: str = None, email: str = None):
+    def update(id: int, nome: Optional[str] = None, email: Optional[str] = None) -> dict:
+        '''
+        Atualiza os dados de aluno no banco. Com exceção do ID, os dados de atualização são opcionais.
+        Quando algum deles não é fornecido, a função simplesmente não atualiza o dado omisso.
+
+        Parâmetros:
+            - id (int) -> ID do aluno cujos dados serão atualizados
+            - nome (str) [Optional] --> Novo nome do aluno
+            - email (str) [Optional] --> Novo email do aluno
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
+            - message (str) --> Mensagem relacionada a operação
+        '''
         aluno = session.get(Alunos, id)
 
         if not aluno or aluno == {} or aluno.deleted == True:
@@ -100,6 +138,15 @@ class AlunosHandler():
                 "status": "Error",
                 "status_code": 404,
                 "message": "Aluno não encontrado.",
+            }
+
+        aluno_diferente = session.query(Alunos).where(Alunos.nome==nome).first()
+
+        if aluno_diferente and aluno_diferente.id != id:
+            return {
+                "status": "Error",
+                "status_code": 409,
+                "message": "Já existe outro aluno com esse nome."
             }
 
         new_nome = nome if nome and nome != "" else aluno.nome
@@ -119,7 +166,19 @@ class AlunosHandler():
             "message": "Dados atualizados com sucesso."
         }
 
-    def hard_delete(id):
+    def hard_delete(id: int) -> dict:
+        '''
+        Apaga os dados do aluno cujo ID foi fornecido.
+
+        Parâmetros:
+            - id (int) --> ID do aluno cujos dados serão apagados
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
+            - message (str) --> Mensagem relacionada a operação
+        '''
+
         aluno = session.get(Alunos, id)
 
         #TODO --> Hard Delete On Cascade (Será que dá para fazer com relationship?)
@@ -139,11 +198,22 @@ class AlunosHandler():
 
         return {
             "status": "Successful",
-            "message": "Aluno deletado com sucesso.",
-            "matriculas": matriculas[1]
+            "message": "Aluno deletado com sucesso."
         }
 
-    def soft_delete(id):
+    def soft_delete(id) -> dict:
+        '''
+        Marca a coluna "deleted" do aluno como True, informando que seus dados foram para a lixeira, 
+        mas ainda podem ser recuperados.
+
+        Parâmetros:
+            - id (int) --> ID do aluno no banco
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
+            - message (str) --> Mensagem relacionada a operação
+        '''
 
         #TODO --> Soft Delete On Cascade
 
@@ -177,7 +247,19 @@ class AlunosHandler():
     #TODO --> Consertar essa bagaça de get_cursos ------------------------------------------------------------
     #TODO --> Adicionar retorno correto ----------------------------------------------------------------------
 
-    def get_cursos(id):
+    def get_cursos(id: int) -> dict:
+        '''
+        Retorna a lista de cursos em que o aluno está matriculado.
+
+        Parâmetros:
+            - id (int) --> ID do aluno no banco
+
+        Retorno (dict):
+            - status (str) --> Indica se operação ocorreu normamente (Successful) ou se houve algum erro (Error)
+            - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
+            - message (str) --> Mensagem relacionada a operação
+            - data (list[dict]) --> Lista de dicionários dos cursos
+        '''
 
         ids_cursos = (
             session.query(Matriculas.id_curso).where(Matriculas.deleted == False)
