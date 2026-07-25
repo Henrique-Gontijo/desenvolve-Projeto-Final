@@ -86,10 +86,39 @@ Agora, o "host" é o servidor em que está o banco e "port" é a porta de entrad
 
 `mysql+maysqldb://scott:tiger@127.0.0.1:8000/foo`
 
-Para mais informações sobre o assunto, acesse a página oficial do SQLAlchemy: https://docs.sqlalchemy.org/en/21/core/engines.html
+Para saber qual é o seu "dialect" e "driver", além de mais informações, acesse a página oficial do SQLAlchemy pelo link: https://docs.sqlalchemy.org/en/21/core/engines.html
+
+Tendo em mãos o "dialect", "driver", nome de usuário, senha, "host", "port" e nome do seu banco de dados, crie um arquivo sem extensão chamado `.env` na pasta raiz, nele escreva:
+
+````
+DIALECT_DRIVER = "dialect+driver"
+USERNAME = "seu_nome_de_usuario_aqui"
+PASSWORD = "sua_senha_aqui"
+HOST = "host/servidor_do_banco"
+PORT = Numero_da_porta" (sem as aspas)
+DATABASE = "nome_do_banco"
+````
+
+Eis um exemplo:
+
+````
+DIALECT_DRIVER = "mysql+maysqldb"
+USERNAME = "scott"
+PASSWORD = "tiger"
+HOST = "127.0.0.1:8000"
+PORT = 8000
+DATABASE = "foo"
+````
+
+**OBS**: Em alguns casos, sua URL de conexão não possui um ou outro dado (por exemplo a "port"), nesse caso, basta omitir essa parte no arquivo (no exemplo dado, seria apenas não escrever a linha do PORT).
+
+Ademais, caso não tenha um banco de dados ou deseje apenas realizar testes no projeto, você pode criar um banco de dados em um arquivo local da seguinte maneira:
+
+```
+DIALECT_DRIVER = "sqlite+pysqlite"
+DABASESE = "database.db"
+```
 
 ### 3. Rodando o projeto localmente
 
 Após completar os passos anteriores, ainda com o ambiente .venv ativo e na pasta raiz, digite `uvicorn app.main:app`, após alguns segundos, aparecerá a seguinte linha no terminal: ***INFO**    Uvicorn running on http://127.0.0.1:8000*, clique ems sobre o link segurando o botão "Ctrl" e será aberta uma página no seu navegador com o projeto em funcionamento. Caso queira realizar requisições HTTP mais complexas (POST, PUT e DELETE), será necessário utilizar alguma outra ferramenta tal como Postman.
-
-**OBS**: Caso queira utilizar uma base de dados pré-pronta para testes, basta fazer tal e tal. Caso contrário, pode apagar o arquivo "database.db" da pasta raiz.
