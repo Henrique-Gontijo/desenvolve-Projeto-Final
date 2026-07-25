@@ -88,9 +88,9 @@ class MatriculasHandler():
             - data (list[dict]) --> Lista de dicionários com as matrículas
         '''
 
-        response = session.query(Matriculas).where(Matriculas.deleted == False).all()
+        response = session.query(Matriculas).where(Matriculas.deleted == True).all()
 
-        if not response:
+        if response == None:
             return {
                 "status": "Error",
                 "status_code": 500,
@@ -100,7 +100,7 @@ class MatriculasHandler():
 
         return {
             "status": "Successful",
-            "message": "Matriculas listasdas com sucesso.",
+            "message": "Nenhuma matrícula encontrada." if response == [] else "Matrículas listadas com sucesso.",
             "data": response
         }
 
@@ -147,8 +147,6 @@ class MatriculasHandler():
             - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
             - message (str) --> Mensagem relacionada a operação
         '''
-
-        #TODO --> Hard Delete On Cascade (Será que dá para fazer com relationship?)
         
         matricula = session.get(Matriculas, id)
 
@@ -180,8 +178,6 @@ class MatriculasHandler():
             - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
             - message (str) --> Mensagem relacionada a operação
         '''
-
-        #TODO --> Soft Delete On Cascade
 
         matricula = session.get(Matriculas, id)
 

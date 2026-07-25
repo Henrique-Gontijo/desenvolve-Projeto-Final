@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 
+import os
+from dotenv import load_dotenv
+
 from app.database.connection import (Base, engine, SessionLocal)
 from app.controllers.AlunosHandler import AlunosHandler as AlunosHndl
 from app.controllers.CursosHandler import CursosHandler as CursosHndl
@@ -10,6 +13,10 @@ from app.database.models.Matriculas import Matriculas
 from app.routes.alunos import alunos_router
 from app.routes.cursos import cursos_router
 from app.routes.matriculas import matriculas_router
+
+load_dotenv()
+
+x = os.getenv("X")
 
 
 app = FastAPI()
@@ -105,7 +112,8 @@ data = session.query(Matriculas).where(Matriculas.id_aluno == 5).where(Matricula
 def read_root():
     
     return {
-        "data": data
+        "data": data,
+        "x": x
     }
     
     #return {"Hello": "World"}

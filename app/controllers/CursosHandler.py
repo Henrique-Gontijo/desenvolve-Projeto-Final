@@ -73,7 +73,7 @@ class CursosHandler():
     
         response = session.query(Cursos).where(Cursos.deleted == False).all()
 
-        if not response:
+        if response == None:
             return {
                 "status": "Error",
                 "status_code": 500,
@@ -83,7 +83,7 @@ class CursosHandler():
 
         return {
             "status": "Successful",
-            "message": "Cursos listados com sucesso.",
+            "message": "Nenhum curso encontrado." if response == [] else "Cursos listados com sucesso.",
             "data": response
         }
 
@@ -180,8 +180,6 @@ class CursosHandler():
             - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
             - message (str) --> Mensagem relacionada a operação
         '''
-    
-        #TODO --> Hard Delete On Cascade (Será que dá para fazer com relationship?)
 
         curso = session.get(Cursos, id)
 
@@ -192,8 +190,17 @@ class CursosHandler():
                 "message": "Curso não encontrado."
             }
 
+        matriculas = (
+            session.query(Matriculas)
+            .where(Matriculas.id_curso == id).all()
+        )
+        
+        if matriculas != []:
+            for matricula in matriculas:
+                session.delete(matricula)
+
         session.delete(curso)
-        session.commit()
+        session.commit()        
 
         return {
             "status": "Successful",
@@ -213,8 +220,6 @@ class CursosHandler():
             - status_code (int) --> Em caso de erro, o código HTTP relacionado a ele
             - message (str) --> Mensagem relacionada a operação
         '''
-
-        #TODO --> Soft Delete On Cascade
 
         curso = session.get(Cursos, id)
 
@@ -239,9 +244,6 @@ class CursosHandler():
             "message": "Soft Delete executado com sucesso."
         }
 
-     #TODO --> Consertar essa bagaça de get_alunos ------------------------------------------------------------
-    #TODO --> Adicionar retorno correto ----------------------------------------------------------------------
-
     def get_alunos(id: int) -> dict:
         '''
         Retorna a lista de alunos matriculados no curso.
@@ -256,13 +258,35 @@ class CursosHandler():
             - data (list[dict]) --> Lista de dicionários dos alunos
         '''        
 
-        ids_alunos = (
-            session.query(Matriculas.id_aluno).where(Matriculas.deleted == False)
-            .where(Matriculas.id_curso == id).all()
-        )
+        matriculas = session.query(Matriculas).where(Matriculas.deleted == False).where(Matriculas.id_curso == id).all()
+        
+        if matriculas == None:
+            return {
+                "status": "Error",
+                "status_code": 500,
+                "message": "Erro desconhecido ao tentar listar os alunos.",
+                "data": None
+            }
 
-        #alunos = session.query(Alunos).where(Alunos.id.in_(ids_alunos)).all()
+        if matriculas == []:
+            message = "Não há nenhum aluno matriculado no curso."
+            data = []
 
-        return ids_alunos
+        else:
+            cursos = []
+
+            for matricula in matriculas:
+                curso = session.query(Alunos).where(Alunos.deleted == False).where(Alunos.id == matricula.id_aluno).first()
+
+                cursos.append(curso)
+
+            message = "Alunos matriculados no curso listados com sucesso."
+            data = cursos
+
+        return {
+            "status": "Successful",
+            "message": message,
+            "data": data
+        }     
     
 session.close()

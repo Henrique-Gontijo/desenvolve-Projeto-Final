@@ -7,7 +7,7 @@ from app.controllers.AlunosHandler import AlunosHandler
 
 alunos_router = APIRouter(prefix="/alunos", tags=["alunos"])
 
-@alunos_router.get("/", response_model=GetAlunosSchema)
+@alunos_router.get("/")
 async def listar_alunos(status_code=200):
     '''
         # Successful Responses
@@ -66,16 +66,9 @@ async def listar_alunos(status_code=200):
     if response["status"] == "Error": 
         raise HTTPException(status_code=response["status_code"], detail=response["message"])
     
-    if len(response["data"]) > 0:
-        return response
-    else:
-        return {
-            "status": "Successful",
-            "message": "Nenhum aluno encontrado.",
-            "data": []
-        }
+    return response
     
-@alunos_router.get("/{id_aluno}", response_model=GetAlunoByIdSchema)
+@alunos_router.get("/{id_aluno}")
 async def buscar_aluno(id_aluno: int, status_code=200):
     '''
         # Successful Response
@@ -116,7 +109,7 @@ async def buscar_aluno(id_aluno: int, status_code=200):
 
     return response
 
-@alunos_router.post("/cadastro", response_model=CreateAlunoResponseSchema)
+@alunos_router.post("/cadastro")
 async def cadastrar_aluno(schema: CreateAlunoSchema, status_code=201):
     '''
         # Successful Response
@@ -149,7 +142,7 @@ async def cadastrar_aluno(schema: CreateAlunoSchema, status_code=201):
 
     return response
 
-@alunos_router.put("/{id_aluno}/atualizar_dados", response_model=UpdateAlunoResponseSchema)
+@alunos_router.put("/{id_aluno}/atualizar_dados")
 async def atualizar_dados_aluno(id_aluno: int, schema: UpdateAlunoSchema, status_code=204):
     '''
         # Successful Response
@@ -192,7 +185,7 @@ async def atualizar_dados_aluno(id_aluno: int, schema: UpdateAlunoSchema, status
     return response
 
 @alunos_router.delete("/{id_aluno}/deletar")
-async def deletar_aluno(id_aluno: int, status_code=204, reponse_model=HardDeleteAlunoResponseSchema):
+async def deletar_aluno(id_aluno: int, status_code=204):
     '''
         # Successful Response
         
@@ -224,7 +217,7 @@ async def deletar_aluno(id_aluno: int, status_code=204, reponse_model=HardDelete
     return response
 
 @alunos_router.delete("/{id_aluno}/excluir")
-async def excluir_aluno(id_aluno: int, status_code=204, response_model=SoftDeleteAlunoResponseSchema):
+async def excluir_aluno(id_aluno: int, status_code=204):
     '''
         # Successful Response
         
@@ -257,7 +250,7 @@ async def excluir_aluno(id_aluno: int, status_code=204, response_model=SoftDelet
     return response
 
 @alunos_router.get("/{id_aluno}/cursos")
-async def listar_cursos_aluno(id_aluno: int, status_code=200, response_model=GetCursosSchema):
+async def listar_cursos_aluno(id_aluno: int, status_code=200):
     '''
         # Successful Responses
         

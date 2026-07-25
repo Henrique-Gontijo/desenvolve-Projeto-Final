@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 
-from app.database.models.Matriculas import Matriculas
 from app.schemas.matriculas_schemas import *
 from app.controllers.MatriculasHandler import MatriculasHandler
 
@@ -8,7 +7,7 @@ from app.controllers.MatriculasHandler import MatriculasHandler
 matriculas_router = APIRouter(prefix="/matriculas", tags=["matriculas"])
 
 @matriculas_router.get("/")
-async def listar_matriculas(status_code=200, response_model=GetMatriculasSchema):
+async def listar_matriculas(status_code=200):
     '''
         # Successful Responses
         
@@ -75,7 +74,7 @@ async def listar_matriculas(status_code=200, response_model=GetMatriculasSchema)
             "data": []
         }
     
-@matriculas_router.get("/{id_matricula}", response_model=GetMatriculaByIdSchema)
+@matriculas_router.get("/{id_matricula}")
 async def buscar_matricula(id_matricula: int, status_code=200):
     '''
         # Successful Response
@@ -116,7 +115,7 @@ async def buscar_matricula(id_matricula: int, status_code=200):
 
     return response
 
-@matriculas_router.post("/cadastro", response_model=CreateMatriculaResponseSchema)
+@matriculas_router.post("/cadastro")
 async def cadastrar_matricula(schema: CreateMatriculaSchema, status_code=201):
     '''
         # Successful Response
@@ -149,7 +148,7 @@ async def cadastrar_matricula(schema: CreateMatriculaSchema, status_code=201):
 
     return response
 
-@matriculas_router.delete("/{id_matricula}/deletar", response_model=HardDeleteMatriculaResponseSchema)
+@matriculas_router.delete("/{id_matricula}/deletar")
 async def deletar_matricula(id_matricula: int, status_code=204):
     '''
         # Successful Response
@@ -182,7 +181,7 @@ async def deletar_matricula(id_matricula: int, status_code=204):
 
     return response
 
-@matriculas_router.delete("/{id_matricula}/excluir", response_model=SoftDeleteMatriculaResponseSchema)
+@matriculas_router.delete("/{id_matricula}/excluir")
 async def excluir_matricula(id_matricula: int, status_code=204):
     '''
         # Successful Response
