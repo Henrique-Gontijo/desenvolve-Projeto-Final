@@ -71,7 +71,11 @@ class CursosHandler():
             - data (list[dict]) --> Lista de dicionários com os dados dos cursos
         '''
     
-        response = session.query(Cursos).where(Cursos.deleted == False).all()
+        response = (
+            session.query(Cursos)
+            .where(Cursos.deleted == False)
+            .order_by(Cursos.titulo).all()
+        )
 
         if response == None:
             return {

@@ -68,7 +68,11 @@ class AlunosHandler():
             - data (list[dict]) --> Lista de dicionários com os dados dos alunos
         '''
 
-        response = session.query(Alunos).where(Alunos.deleted == False).all()
+        response = (
+            session.query(Alunos)
+            .where(Alunos.deleted == False)
+            .order_by(Alunos.nome).all()
+        )
 
         if response == None:
             return {
@@ -178,10 +182,6 @@ class AlunosHandler():
         '''
 
         aluno = session.get(Alunos, id)
-
-        #TODO --> Hard Delete On Cascade (Será que dá para fazer com relationship?)
-
-        #TODO --> Verificar o porquê desta query esstar retornando uma lista de objetos vazios
 
         if not aluno or aluno == {}:
             return {
