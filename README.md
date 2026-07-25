@@ -100,7 +100,7 @@ Eis um exemplo:
 
 Ademais, caso não tenha um banco de dados ou deseje apenas realizar testes no projeto, você pode criar um banco de dados em um arquivo local da seguinte maneira:
 
-`DATABASE_URL = "sqlite+pysqlite///database.db"`
+`DATABASE_URL = "sqlite+pysqlite:///database.db"`
 
 ### 3. Rodando o projeto localmente
 
