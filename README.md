@@ -86,38 +86,21 @@ Agora, o "host" é o servidor em que está o banco e "port" é a porta de entrad
 
 `mysql+maysqldb://scott:tiger@127.0.0.1:8000/foo`
 
-Para saber qual é o seu "dialect" e "driver", além de mais informações, acesse a página oficial do SQLAlchemy pelo link: https://docs.sqlalchemy.org/en/21/core/engines.html
+Para saber qual é a sua URL de conexão com o banco além de mais informações, acesse a página oficial do SQLAlchemy pelo link: https://docs.sqlalchemy.org/en/21/core/engines.html
 
-Tendo em mãos o "dialect", "driver", nome de usuário, senha, "host", "port" e nome do seu banco de dados, crie um arquivo sem extensão chamado `.env` na pasta raiz, nele escreva:
+Tendo em mãos a URL de conexão, crie um arquivo sem extensão chamado `.env` nasta raiz do projeto, nele escreva:
 
-````
-DIALECT_DRIVER = "dialect+driver"
-USERNAME = "seu_nome_de_usuario_aqui"
-PASSWORD = "sua_senha_aqui"
-HOST = "host/servidor_do_banco"
-PORT = Numero_da_porta" (sem as aspas)
-DATABASE = "nome_do_banco"
-````
+`DATABASE_URL = "sua_url_de_conexao_aqui"
 
 Eis um exemplo:
 
-````
-DIALECT_DRIVER = "mysql+maysqldb"
-USERNAME = "scott"
-PASSWORD = "tiger"
-HOST = "127.0.0.1:8000"
-PORT = 8000
-DATABASE = "foo"
-````
+`DATABASE_URL = "mysql+maysqldb://scott:tiger@127.0.0.1:8000/foo"`
 
-**OBS**: Em alguns casos, sua URL de conexão não possui um ou outro dado (por exemplo a "port"), nesse caso, basta omitir essa parte no arquivo (no exemplo dado, seria apenas não escrever a linha do PORT).
+**OBS**: Caso sua senha ou seu nome de usuário possua os caracteres "/", "@" ou ":", esse fato irá resultar em erro na conexão com o banco. Para evitar isso criei o arquivo `url_parser.py` na pasta raiz, para utilizá-lo execute o comando no terminal (dentro da pasta raiz, claro) `py url_parser.py` caso esteja no Windows ou `python3 url_parser.py` caso esteja em uma distribuição Linux. A seguir digite a sua senha ou nome de usuário no terminal e aperte "Enter". Pronto, basta copiar o texto salvo no arquivo "parsed_url.txt" que acabou de ser criado.
 
 Ademais, caso não tenha um banco de dados ou deseje apenas realizar testes no projeto, você pode criar um banco de dados em um arquivo local da seguinte maneira:
 
-```
-DIALECT_DRIVER = "sqlite+pysqlite"
-DABASESE = "database.db"
-```
+`DATABASE_URL = "sqlite+pysqlite///database.db"`
 
 ### 3. Rodando o projeto localmente
 
