@@ -29,3 +29,11 @@ class Cursos(Base):
     def __init__(self, titulo: str, descricao: Optional[str] = None):
         self.titulo = titulo
         self.descricao = descricao
+
+    def to_dict(self) -> dict:
+            return {
+                "id": self.id,
+                "titulo": self.titulo,
+                "descricao": self.descricao,
+                "deleted": self.deleted
+            }

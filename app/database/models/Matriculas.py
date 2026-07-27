@@ -28,3 +28,11 @@ class Matriculas(Base):
     def __init__(self, id_curso: int, id_aluno: int):
         self.id_curso = id_curso
         self.id_aluno = id_aluno
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "id_curso": self.id_curso,
+            "id_aluno": self.id_aluno,
+            "delted": self.deleted
+        }

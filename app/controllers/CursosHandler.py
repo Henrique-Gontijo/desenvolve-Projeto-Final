@@ -85,10 +85,22 @@ class CursosHandler():
                 "data": None
             }
 
+        if response == []:
+            message = "Nenhum curso econtrado."
+            cursos_list = []
+
+        else:
+            cursos_list = []
+
+            for curso in response:
+                message = "Cursos listados com sucesso."
+                curso_dict = curso.to_dict()
+                cursos_list.append(curso_dict)
+
         return {
             "status": "Successful",
-            "message": "Nenhum curso encontrado." if response == [] else "Cursos listados com sucesso.",
-            "data": response
+            "message": message,
+            "data": cursos_list
         }
 
     def get_byId(id: int) -> dict:
@@ -118,7 +130,7 @@ class CursosHandler():
         return {
             "status": "Successful",
             "message": "Aluno encontrado com sucesso.",
-            "data": response
+            "data": response.to_dict()
         }
 
     def update(id: int, titulo: Optional[str] = None, descricao: Optional[str] = None) -> dict:

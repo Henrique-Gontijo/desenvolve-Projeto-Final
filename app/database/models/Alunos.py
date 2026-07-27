@@ -27,3 +27,11 @@ class Alunos(Base):
     def __init__(self, nome: str, email: str):
         self.nome = nome
         self.email = email
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "email": self.email,
+            "deleted": self.deleted
+        }

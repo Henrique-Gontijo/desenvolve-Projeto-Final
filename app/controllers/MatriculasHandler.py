@@ -98,10 +98,22 @@ class MatriculasHandler():
                 "data": None
             }
 
+        if response == []:
+            message = "Nenhuma matrícula econtrada."
+            matriculas_list = []
+
+        else:
+            matriculas_list = []
+
+            for matricula in response:
+                message = "Matrículas listados com sucesso."
+                matricula_dict = matricula.to_dict()
+                matriculas_list.append(matricula_dict)
+
         return {
             "status": "Successful",
-            "message": "Nenhuma matrícula encontrada." if response == [] else "Matrículas listadas com sucesso.",
-            "data": response
+            "message": message,
+            "data": matriculas_list
         }
 
 
@@ -132,7 +144,7 @@ class MatriculasHandler():
         return {
             "status": "Successful",
             "message": "Matrícula encontrada com sucesso.",
-            "data": response
+            "data": response.to_dict()
         }
 
     def hard_delete(id: int) -> dict:

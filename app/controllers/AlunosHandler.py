@@ -82,10 +82,22 @@ class AlunosHandler():
                 "data": None
             }
 
+        if response == []:
+            message = "Nenhum aluno econtrado."
+            alunos_list = []
+
+        else:
+            alunos_list = []
+
+            for aluno in response:
+                message = "Alunos listados com sucesso."
+                aluno_dict = aluno.to_dict()
+                alunos_list.append(aluno_dict)
+
         return {
             "status": "Successful",
-            "message": "Nenhum aluno encontrado." if response == [] else "Alunos listados com sucesso.",
-            "data": response
+            "message": message,
+            "data": alunos_list
         }
 
     def get_byId(id: int) -> dict:
@@ -115,7 +127,7 @@ class AlunosHandler():
         return {
             "status": "Successful",
             "message": "Aluno encontrado com sucesso.",
-            "data": response
+            "data": response.to_dict()
         }
 
     def update(id: int, nome: Optional[str] = None, email: Optional[str] = None) -> dict:
